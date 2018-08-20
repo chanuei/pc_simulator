@@ -6,9 +6,9 @@ CFLAGS = -Wall -Wshadow -Wundef -Wmaybe-uninitialized
 CFLAGS += -O3 -g3 -I./
 LDFLAGS += -lSDL2 -lm
 BIN = demo
-VPATH = 
+#VPATH = 
 
-LVGL_DIR = ${shell pwd}
+#LVGL_DIR = ${shell pwd}
 
 MAINSRC = main.c
 
@@ -71,26 +71,30 @@ include ./lv_examples/lv_tutorial/8_animations/lv_tutorial_animations.mk
 include ./lv_examples/lv_tutorial/9_responsive/lv_tutorial_responsive.mk
 
 OBJEXT ?= .o
+OBJDIR = obj
 
-AOBJS = $(ASRCS:.S=$(OBJEXT))
-COBJS = $(CSRCS:.c=$(OBJEXT))
+AOBJS = $(addprefix  $(OBJDIR)/, $(ASRCS:.S=$(OBJEXT)))
+COBJS = $(addprefix  $(OBJDIR)/, $(CSRCS:.c=$(OBJEXT)))
 
-MAINOBJ = $(MAINSRC:.c=$(OBJEXT))
+
+MAINOBJ = $(addprefix  $(OBJDIR)/, $(MAINSRC:.c=$(OBJEXT)))
 
 SRCS = $(ASRCS) $(CSRCS) $(MAINSRC)
-OBJS = $(AOBJS) $(COBJS)
+#OBJS = $(AOBJS) $(COBJS)
 
 ## MAINOBJ -> OBJFILES
 
-all: clean default
 
-%.o: %.c
+    
+$(OBJDIR)/%.o: %.c
 	@$(CC)  $(CFLAGS) -c $< -o $@
 	@echo "CC $<"
-    
+
 default: $(AOBJS) $(COBJS) $(MAINOBJ)
 	$(CC) -o $(BIN) $(MAINOBJ) $(AOBJS) $(COBJS) $(LDFLAGS)
 
 clean: 
 	rm -f $(BIN) $(AOBJS) $(COBJS) $(MAINOBJ)
+
+all: default
 
